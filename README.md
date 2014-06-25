@@ -1,9 +1,10 @@
+==================
 http-premitive
 ==================
 
-a premitive http server implementation.
+A premitive http server implementation.
 
 Features 
-・multiplexing is supported by fork.
-・corresponding to GET request only.
-・text contents only.
+ -Multiplexing is supported by fork.
+ -Corresponding to GET request only.
+ -Text contents only.
