@@ -1,4 +1,10 @@
+/*****************************************************
+ * http-premitive server main routine.               *
+ * Usage : ./server [ option(help) | port-number ]   *
+ *****************************************************/
+
 #include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
 #include "serverconf.h"
 #include "serversoc.h"
@@ -7,8 +13,20 @@ int
 main(int argc, char *argv[])
 {
 int	sockfd;
+int portno;
 
-if ((sockfd = prepare_socket(HTTP_PORT)) == -1) {
+if (argc > 0) {
+	if (strcmp(argv[0], "--help")) {
+		printf("Usage: ./server port-number\n");
+		return 1;
+	}
+	else
+		portno = atoi(argv[0]);
+}
+else
+	portno = HTTP_PORT;
+
+if ((sockfd = prepare_socket(portno)) == -1) {
 	fprintf(stderr, "socket error\n");
 	return -1;
 }
