@@ -11,6 +11,6 @@
 #define __SERVER_SOC__
 
 int prepare_socket(int);
-void accept_loop(int);
+void accept_routine(int);
 
 #endif
