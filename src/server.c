@@ -1,13 +1,13 @@
-/*****************************************************
- * http-premitive server main routine.               *
- * Usage : ./server [ option(help) | port-number ]   *
- *****************************************************/
+/************************************************************
+ * http-premitive server main routine.                      *
+ * Usage : ./server [ option(help) | port-number ]          *
+ ************************************************************/
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include "serverconf.h"
-#include "serversoc.h"
+#include "conf.h"
+#include "soc.h"
 
 int
 main(int argc, char *argv[])
