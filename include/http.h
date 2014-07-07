@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #ifndef __HTTP_SERVER_DEF__
@@ -16,7 +17,7 @@ typedef struct _req_header {
 } req_header; 
 void http_server_routine(int);
 typedef req_header* (*req_handler_t)(req_header*, char*);
-req_header* parse_message(req_handler_t, char*, size_t); 
+req_header* parse_message(req_handler_t, char*); 
 req_header* justscan(req_header*, char*);
 
 #endif
