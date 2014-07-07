@@ -3,20 +3,50 @@
 void
 http_server_routine(int sockfd)
 {
-size_t len;
-char buf[RECV_BUF_SIZE];
+int readfd;
+ssize_t len;
+char* filename;
+char sbuf[SEND_BUF_SIZE],rbuf[RECV_BUF_SIZE];
 req_header* req;
+ssize_t send_message(int, const char*);
 
-if (recv(sockfd, buf, sizeof(buf), 0) == -1) { 
+if (recv(sockfd, rbuf, sizeof(rbuf), 0) == -1) { 
   perror("recv");
   return;
 }
-buf[len] = '\0';
+rbuf[len] = '\0';
 
-if ((req = parse_message(justscan, buf)) == NULL) { 
+if ((req = parse_message(justscan, rbuf)) == NULL) { 
   perror("parse_message error\n");
   return;
 }
+
+if (strcmp(req->method, "GET") != 0) {  
+  send_message(sockfd, "501 Not Implemented")
+  return;
+}
+
+filename = req->path + 1;
+if ((readfd = open(filename, O_RDONLY)) == -1) {
+  send_message(sockfd, "404 Not Found");
+  perror("open");
+  return; 
+} else {
+  /* this procedure below may be optimized by the compiler. */
+  send_message(sockfd, "HTTP/1.0 200 OK\n");
+  send_message(sockfd, "text/html\n");
+  send_message(sockfd, "\n");
+
+  while ((len = read(readfd, sbuf, sizeof(sbuf))) > 0) 
+    if (send(sockfd, sbuf, len) != len) {
+      perror("send");
+      free(req);
+      close(readfd);
+      break;
+    } 
+  close(readfd);
+}
+
 free(req);
 } /* http_server_routine */
 
@@ -48,3 +78,16 @@ if (sscanf(buf, "%s %s %s", header->method,
 } 
 return header; 
 } /* justscan */
+
+static ssize_t 
+send_message(int sockfd, const char* buf)
+{
+ssize_t len;
+if ((len = send(sockfd, buf, sizeof(buf), 0)) < 0) {
+  perror("send");
+  free(req); /* req_header 'req' is declared in parse_message */
+  return -1;
+} 
+return len;
+} /* send_message */
+
