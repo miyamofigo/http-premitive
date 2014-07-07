@@ -28,15 +28,7 @@ parse_message(req_header* (*handler)(req_header*, char*),
 req_header*
 justscan(req_header* header, char* buf)
 {
-char method[METHOD_NAME_LENGTH];
-char uri[URI_ADDRESS_SIZE];
-char http_ver[HTTP_VERSION_SIZE];
-
-sscanf(buf, "%s %s %s", method, uri, http_ver);
-strcpy(header->method, method);
-strcpy(header->path, uri);
-strcpy(header->version, http_ver);
-return header;
-}
+sscanf(buf, "%s %s %s", header->method, header->path, header->version);
+return header; 
 } /* justscan */
 
