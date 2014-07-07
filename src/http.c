@@ -8,7 +8,7 @@ ssize_t len;
 char* filename;
 char sbuf[SEND_BUF_SIZE],rbuf[RECV_BUF_SIZE];
 req_header* req;
-ssize_t send_message(int, const char*);
+static ssize_t send_message(int, const char*);
 
 if (recv(sockfd, rbuf, sizeof(rbuf), 0) == -1) { 
   perror("recv");
