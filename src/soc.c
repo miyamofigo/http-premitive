@@ -54,8 +54,8 @@ pid_t pid;
 socklen_t len;
 
 while(1) {
-  len = (socklen_t)sizeof(from);
-  if ((acc = accept(soc, (struct sockaddr *)&cli, &len)) == -1) {
+  len = (socklen_t)sizeof(cli);
+  if ((acc = accept(sockfd, (struct sockaddr *)&cli, &len)) == -1) {
     if (errno != EINTR)
       perror("accept");
   } else {
@@ -66,9 +66,9 @@ while(1) {
     fprintf(stderr, "accept:%s:%s\n", hostname, servname);
     if ((pid = fork()) == 0) {
       close(sockfd);
-      http_server_routine(acc);
+      http_server_routine(acc); 
       close(acc);
-      _exit(1);
+      _exit(1);  
     } else if (pid > 0) {
       close(acc);
       acc = -1;
@@ -79,20 +79,38 @@ while(1) {
     }
     if ((pid = waitpid(-1, &status, WNOHANG)) > 0) {
       fprintf(stderr,
-              "accept_routine:waitid:pid=%d.status=%d\n",
+              "accept_routine:waitpid:pid=%d.status=%d\n",
               pid,
               status);
       fprintf(stderr, 
-              " WIFEXITED:%d,WEXITSTATUS:%d,WIFSIGNALED:%d,"
+              "WIFEXITED:%d,WEXITSTATUS:%d,WIFSIGNALED:%d,"
               "WTERMSIG:%d,WIFSTOPPED:%d,WSTOPSIG:%d\n",
               WIFEXITED(status),
               WEXITSTATUS(status),
               WIFSIGNALED(status),
-              WTEMSIG(status),
+              WTERMSIG(status),
               WIFSTOPPED(status),
               WSTOPSIG(status));
     }
   }
 }
 } /* accept_loop */
+
+void
+sig_child_handler(int sig)
+{
+int status;
+pid_t pid;
+pid = wait(&status);
+fprintf(stderr, "sig_child_handler:wait:pid=%d,status=%d\n",pid,status);
+fprintf(stderr, 
+        "WIFEXITED:%d,WEXITSTATUS:%d,WIFSIGNALED:%d,"
+        "WTERMSIG:%d,WIFSTOPPED:%d,WSTOPSIG:%d\n",
+        WIFEXITED(status),
+        WEXITSTATUS(status),
+        WIFSIGNALED(status),
+        WTERMSIG(status),
+        WIFSTOPPED(status),
+        WSTOPSIG(status));
+}
 
