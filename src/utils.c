@@ -7,7 +7,7 @@ mystrlcat(char *dest,       /* buffer */
           size_t size)      /* buffer length */
 {
 const char *spos;
-char *dpos, *end;
+char *dpos, *end, *ps;
 size_t dlen, rest;
 
 dpos = dest;
@@ -16,7 +16,7 @@ while (*dpos != '\0' && rest != 0) {
   dpos++; 
   rest--;
 }
-dlen = dpos - dest
+dlen = dpos - dest;
 if (size - dlen == 0)
   return (dlen + strlen(src));
 dpos = dest + size - 1;
@@ -29,4 +29,21 @@ while (dpos <= end) {
 }
 while (*spos++);
 return (dlen + (spos - src -1));
-} /* mystrlcat */.
+} /* mystrlcat */
+
+size_t
+gettoken(char* dest, char** src, size_t destlen)
+{
+size_t cnt = 0;
+size_t limit = (destlen <= MAX_TOKEN_SIZE) ? 
+														destlen : MAX_TOKEN_SIZE;
+
+while (isspace(**src)) (*src)++;
+while (!isspace(**src) && **src != '\0' && cnt <= limit-1) {
+	*dest++ = *(*src)++;
+	cnt++;
+}
+*dest = '\0';
+return cnt;	
+} /* gettoken */
+
